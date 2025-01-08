@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def dashboard(request):
-    return render(request, 'dashboard.html', {'username': request.user.username})
+    return render(request, 'account/dashboard.html', {'username': request.user.username})
 
 
 def login_view(request):
