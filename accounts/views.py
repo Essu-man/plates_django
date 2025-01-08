@@ -8,6 +8,11 @@ from .models import PlateRecord, Plate, UploadedFile
 from django.http import HttpResponse
 import xml.etree.ElementTree as ET
 import pandas as pd
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def dashboard(request):
+    return render(request, 'dashboard.html', {'username': request.user.username})
 
 
 def login_view(request):
@@ -108,4 +113,3 @@ def delete_file(request, file_id):
     uploaded_file = get_object_or_404(UploadedFile, id=file_id)
     uploaded_file.delete()  # Delete the file
     return redirect('userpage')  # Redirect back to the user page
-

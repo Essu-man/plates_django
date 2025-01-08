@@ -29,15 +29,15 @@
             <p class="text-sm text-gray-500">Thank you for using the DV Plates Management System.</p>
         </div>
 
-        <form action="{% url 'logout' %}" method="post">
+        <form action="{% url 'login' %}" method="post">
             {% csrf_token %}
             <button type="submit" class="w-full bg-black text-white p-3 rounded-md hover:bg-gray-800">
-                Logout
+                Login Again
             </button>
         </form>
 
         <div class="mt-4 text-center">
-            <a href="{% url 'login' %}" class="text-green-500">Login Again</a>
+            <a href="{% url 'login' %}" class="text-green-500"></a>
         </div>
     </div>
 </body>
