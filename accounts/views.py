@@ -10,10 +10,6 @@ import xml.etree.ElementTree as ET
 import pandas as pd
 from django.contrib.auth.decorators import login_required
 
-@login_required
-def dashboard(request):
-    return render(request, 'account/dashboard.html', {'username': request.user.username})
-
 
 def login_view(request):
     if request.method == "POST":
@@ -40,6 +36,9 @@ def dashboard_view(request):
     if not request.user.is_authenticated:
         return redirect('login')  # Redirect to login if user is not authenticated
     return render(request, "account/dashboard.html")
+
+def dashboard_view(request):
+    return render(request, 'account/dashboard.html', {'username': request.user.username})
 
 
 def index_view(request):
