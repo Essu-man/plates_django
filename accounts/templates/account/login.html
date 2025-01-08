@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DVLA Login</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #04A84A; /* Green background */
+        }
+        .login-container {
+            background-color: white; /* White background for the login box */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Shadow effect */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center">
+    <div class="login-container max-w-md mx-auto p-8">
+        <h1 class="text-center text-2xl font-bold mb-4">Dv Plates Management System</h1>
+        <div class="flex justify-center mb-4">
+            <img src="{% static 'images/oop.png' %}" alt="DVLA Logo" class="rounded-full w-24 h-24">
+        </div>
+
+        <!-- Display Django messages -->
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="text-white p-3 rounded-md
+                        {% if message.tags == 'error' %} bg-red-500 {% else %} bg-green-500 {% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form action="{% url 'login' %}" method="post" class="space-y-6">
+            {% csrf_token %}
+            <div>
+                <input type="text" name="username" placeholder="Username" class="w-full p-3 border rounded-md bg-gray-100" required>
+            </div>
+            <div>
+                <input type="password" name="password" placeholder="Password" class="w-full p-3 border rounded-md bg-gray-100" required>
+            </div>
+            <button type="submit" class="w-full bg-black text-white p-3 rounded-md hover:bg-gray-800">Login</button>
+        </form>
+        <div class="mt-4 text-center">
+            <a href="{% url 'dashboard' %}" class="text-green-500"></a>
+        </div>
+    </div>
+</body>
+</html>

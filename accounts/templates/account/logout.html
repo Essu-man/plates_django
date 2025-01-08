@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DVLA Logout</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #04A84A; /* Green background */
+        }
+        .logout-container {
+            background-color: white; /* White background for the logout box */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Shadow effect */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center">
+    <div class="logout-container max-w-md mx-auto p-8">
+        <h1 class="text-center text-2xl font-bold mb-4">Dv Plates Management System</h1>
+        <div class="flex justify-center mb-4">
+            <img src="{% static 'images/oop.png' %}" alt="DVLA Logo" class="rounded-full w-24 h-24">
+        </div>
+
+        <div class="text-center mb-6">
+            <p class="text-lg font-semibold">You have been successfully logged out.</p>
+            <p class="text-sm text-gray-500">Thank you for using the DV Plates Management System.</p>
+        </div>
+
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="w-full bg-black text-white p-3 rounded-md hover:bg-gray-800">
+                Logout
+            </button>
+        </form>
+
+        <div class="mt-4 text-center">
+            <a href="{% url 'login' %}" class="text-green-500">Login Again</a>
+        </div>
+    </div>
+</body>
+</html>

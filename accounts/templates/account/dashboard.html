@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DVLA Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+
+        .logo {
+            width: 130px; /* Increased width */
+            height: 75px; /* Adjusted height to maintain aspect ratio */
+            border-radius: 50%; /* Circular logo */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+            transition: transform 0.3s; /* Smooth scaling on hover */
+        }
+        .logo:hover {
+            transform: scale(1.1); /* Slightly enlarge on hover */
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-green-50 to-blue-50 min-h-screen flex items-center justify-center">
+    <div class="flex min-h-screen w-full">
+        <!-- Sidebar -->
+        <div class="w-72 bg-gradient-to-b from-green-700 to-teal-600 p-6 text-white shadow-lg flex flex-col justify-between">
+            <div>
+                <div class="flex items-center mb-8">
+                    <a href="dashboard.html">
+                        <img src="../static/images/oop.png" alt="DVLA Logo" class="logo cursor-pointer w-16 h-16 rounded-full mr-3">
+                    </a>
+                    <div class="ml-3">
+                        <h2 class="text-2xl font-bold">DVLA </h2>
+                        <p class="text-sm opacity-75">Dv Plates Management System</p>
+                    </div>
+                </div>
+                <nav>
+                    <a href="{% url 'dashboard' %}" class="flex items-center p-3 mb-2 hover:bg-green-500 rounded-lg transition duration-200">
+                        <span class="material-icons mr-3">dashboard</span>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="{% url 'platerecords' %}" class="flex items-center p-3 mb-2 hover:bg-green-500 rounded-lg transition duration-200">
+                        <span class="material-icons mr-3">description</span>
+                        <span>Plate Records</span>
+                    </a>
+                    <a href="{% url 'userpage' %}" class="flex items-center p-3 mb-2 hover:bg-green-500 rounded-lg transition duration-200">
+                        <span class="material-icons mr-3"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
+                          </svg>
+                          </span>
+                        <span>User Page</span>
+                    </a>
+                    <a href="{% url 'super' %}" class="flex items-center p-3 mb-2 hover:bg-green-500 rounded-lg transition duration-200">
+                        <span class="material-icons mr-3">admin_panel_settings</span>
+                        <span>Admin</span>
+                    </a>
+                </nav>
+            </div>
+            <div class="mt-auto flex flex-col items-center">
+                <a href="{% url 'logout' %}" class="flex items-center bg-gradient-to-r from-green-600 to-teal-600 text-white px-5 py-3 rounded-lg shadow-lg hover:from-green-500 hover:to-teal-500 transform hover:scale-105 transition duration-200 ease-in-out mb-4">
+                    <span class="material-icons mr-2">logout</span>
+                    <span class="font-semibold">Logout</span>
+                </a>
+                <div class="text-center opacity-75 text-sm">
+                    © 2024 DVLA Club
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-8">
+            <div class="flex flex-col lg:flex-row gap-6">
+                <!-- Left side (existing content) -->
+                <div class="flex-1">
+                    <!-- Personalized Greeting -->
+                    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-4" id="userGreeting">Welcome!</h2>
+                        <p class="text-gray-600">Remember to verify documents for new registrations.</p>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                        <!-- Total Plates Available Card -->
+                        <div class="bg-white rounded-lg shadow-lg p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <h3 class="text-gray-500">Total Plates Available</h3>
+                                    <p class="text-2xl font-bold" id="totalPlates">0</p>
+                                </div>
+                                <span class="material-icons text-green-500 text-3xl">sync_alt</span>
+                            </div>
+                            <div class="text-sm text-green-500">+15% from last month</div>
+                        </div>
+
+                        <!-- Plates Issued Today Card -->
+                        <div class="bg-white rounded-lg shadow-lg p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <h3 class="text-gray-500">Plates Issued Today</h3>
+                                    <p class="text-2xl font-bold" id="todayPlates">0</p>
+                                </div>
+                                <span class="material-icons text-blue-500 text-3xl">today</span>
+                            </div>
+                            <div class="text-sm text-blue-500">+3 from yesterday</div>
+                        </div>
+
+                         <!-- Total Faulty Plates Card -->
+                         <div class="bg-white rounded-lg shadow-lg p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <h3 class="text-gray-500">Total Faulty Plates</h3>
+                                    <p class="text-2xl font-bold" id="totalFaultyPlates">0</p>
+                                </div>
+                                <span class="material-icons text-blue-500 text-3xl">broken_image</span>
+                            </div>
+                            <div class="text-sm text-blue-500">Last 24 hours</div>
+                        </div>
+
+                        <!-- Recent Activities Card -->
+                        <div class="bg-white rounded-lg shadow-lg p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <h3 class="text-gray-500">Recent Activities</h3>
+                                    <p class="text-2xl font-bold" id="recentActivities">0</p>
+                                </div>
+                                <span class="material-icons text-blue-500 text-3xl">history</span>
+                            </div>
+                            <div class="text-sm text-blue-500">Last 24 hours</div>
+                        </div>
+
+
+                        <div class="text-center mb-6">
+                            <h2 class="text-3xl font-bold text-gray-800">Plate Status Overview</h2>
+                            <div class="w-24 h-1 bg-green-500 mx-auto mt-2"></div>
+                        </div>
+
+
+                        <!-- Plate Status Card: Pending Plates -->
+                        <div class="bg-white rounded-lg shadow-lg p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <h3 class="text-gray-500">Pending Plates</h3>
+                                    <p class="text-2xl font-bold" id="totalPendingPlates">0</p>
+                                </div>
+                                <span class="material-icons text-red-500 text-3xl">pending_actions</span>
+                            </div>
+                            <div class="text-sm text-blue-500">+8 from last month</div>
+                        </div>
+
+
+                         <!-- Plate Status Card: Completed Plates -->
+                         <div class="bg-white rounded-lg shadow-lg p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <h3 class="text-gray-500">Completed Plates</h3>
+                                    <p class="text-2xl font-bold" id="totalCompletedPlates">0</p>
+                                </div>
+                                <span class="material-icons text-blue-500 text-3xl"><svg class="h-8 w-8 text-blue-500"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />  <circle cx="12" cy="14" r="2" />  <polyline points="14 4 14 8 8 8 8 4" /></svg></span>
+                            </span>
+                            </div>
+                            <div class="text-sm text-blue-500">+8 from last month</div>
+                        </div>
+
+                        <!-- Plate Status Card: Approved Plates -->
+                        <div class="bg-white rounded-lg shadow-lg p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <h3 class="text-gray-500">Approved Plates</h3>
+                                    <p class="text-2xl font-bold" id="totalApprovedPlates">0</p>
+                                </div>
+                                <span class="material-icons text-blue-500 text-3xl"><svg class="h-8 w-8 text-green-500"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">  <polyline points="9 11 12 14 22 4" />  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" /></svg></span>
+                            </div>
+                            <div class="text-sm text-blue-500">+8 from last month</div>
+                        </div>
+                    </div>
+
+                    <!-- Charts and Recent Transfers -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                        <!-- Recent Transfers -->
+                        <div class="bg-white rounded-lg shadow-lg p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-xl font-bold text-gray-800">Recent Worked Plates</h2>
+                                <button class="text-green-500 hover:text-green-600">View All</button>
+                            </div>
+                            <div class="space-y-4" id="recentPlates">
+                                <!-- Sample Transfer -->
+                                <div class="border-b pb-3">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <p class="font-semibold">John Doe</p>
+                                            <p class="text-sm text-gray-600">Toyota Camry - ABC123</p>
+                                        </div>
+                                        <span class="text-sm text-gray-500">Today</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Plate Trends Chart -->
+                        <div class="bg-white rounded-lg shadow-lg p-6 lg:col-span-2">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-xl font-bold text-gray-800">Plate Overview Trends</h2>
+                                <select class="border rounded-lg px-2 py-1" id="trendTimeRange">
+                                    <option>This Week</option>
+                                    <option>This Month</option>
+                                    <option>This Year</option>
+                                </select>
+                            </div>
+                            <div class="h-48">
+                                <canvas id="transferTrendsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Plate Types and Status -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Plate Types Distribution -->
+                        <div class="bg-white rounded-lg shadow-lg p-6">
+                            <div class="flex justify-between items-center mb-6">
+                                <h2 class="text-xl font-bold text-gray-800">Plate Types Distribution</h2>
+                                <select class="border rounded-lg px-3 py-1 text-gray-600">
+                                    <option value="month">This Month</option>
+                                    <option value="quarter">This Quarter</option>
+                                    <option value="year">This Year</option>
+                                </select>
+                            </div>
+                            <div class="h-64">
+                                <canvas id="vehicleTypesChart"></canvas>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4 mt-6 text-sm">
+                                <div class="text-center p-3 bg-gray-50 rounded-lg">
+                                    <p class="text-gray-600">Most Common</p>
+                                    <p class="font-bold text-gray-800 mt-1">Issued Plates</p>
+                                    <p class="text-green-600">35%</p>
+                                </div>
+                                <div class="text-center p-3 bg-gray-50 rounded-lg">
+                                    <p class="text-gray-600">Fastest Growing</p>
+                                    <p class="font-bold text-gray-800 mt-1">Approved</p>
+                                    <p class="text-green-600">+12%</p>
+                                </div>
+                                <div class="text-center p-3 bg-gray-50 rounded-lg">
+                                    <p class="text-gray-600">Total Types</p>
+                                    <p class="font-bold text-gray-800 mt-1">5</p>
+                                    <p class="text-blue-600">Categories</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Plate Overview Status -->
+                        <div class="bg-white rounded-lg shadow-lg p-6">
+                            <h2 class="text-xl font-bold text-gray-800 mb-4">Plate Status</h2>
+                            <div class="h-48">
+                                <canvas id="transferStatusChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Sidebar -->
+                <div class="w-full lg:w-1/4 space-y-6">
+                    <!-- Quick Access Shortcuts (Moved here) -->
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">Quick Access</h2>
+                        <div class="flex flex-col space-y-3">
+                            <button onclick="window.location.href='changeowner.html'" class="flex items-center bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-500 transition duration-200">
+                                <span class="material-icons mr-2">add_circle</span>
+                                New Data Entry
+                            </button>
+                            <button onclick="window.location.href='records.html'" class="flex items-center bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-500 transition duration-200">
+                                <span class="material-icons mr-2">schedule</span>
+                                Records Table
+                            </button>
+
+                        </div>
+                    </div>
+
+                    <!-- Announcements (existing content) -->
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">Announcements</h2>
+                        <div class="space-y-4">
+                            <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4">
+                                <p>New regulations for vehicle inspections will take effect on January 1, 2025.</p>
+                            </div>
+                            <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4">
+                                <p>Reminder: Ensure all documents are verified before processing registrations.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Declare chart variables globally
+        let transferTrendsChart, vehicleTypesChart, transferStatusChart;
+
+        // Initialize charts when the document is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Transfer Trends Chart
+            const transferTrendsCtx = document.getElementById('transferTrendsChart').getContext('2d');
+            transferTrendsChart = new Chart(transferTrendsCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Plates Issued',
+                        data: [12, 19, 15, 17, 14, 13, 15],
+                        borderColor: 'rgb(16, 185, 129)',
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Faulty Plates',
+                        data: [5, 7, 4, 6, 3, 5, 4],
+                        borderColor: 'rgb(239, 68, 68)',
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Pending Plates',
+                        data: [8, 10, 12, 9, 11, 7, 8],
+                        borderColor: 'rgb(251, 191, 36)',
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Approved Plates',
+                        data: [15, 18, 16, 20, 17, 19, 16],
+                        borderColor: 'rgb(59, 130, 246)',
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Completed Plates',
+                        data: [10, 13, 11, 14, 12, 15, 13],
+                        borderColor: 'rgb(139, 92, 246)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 5
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Initialize Vehicle Types Chart
+            const vehicleTypesCtx = document.getElementById('vehicleTypesChart').getContext('2d');
+            vehicleTypesChart = new Chart(vehicleTypesCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Issued Plates', 'Faulty Plates', 'Pending Plates', 'Approved Plates', 'Completed Plates'],
+                    datasets: [{
+                        data: [35, 15, 20, 20, 10],
+                        backgroundColor: [
+                            'rgb(16, 185, 129)',  // Green for Issued
+                            'rgb(239, 68, 68)',   // Red for Faulty
+                            'rgb(251, 191, 36)',  // Yellow for Pending
+                            'rgb(59, 130, 246)',  // Blue for Approved
+                            'rgb(139, 92, 246)'   // Purple for Completed
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                boxWidth: 12
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed + '%';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Initialize Transfer Status Chart
+            const transferStatusCtx = document.getElementById('transferStatusChart').getContext('2d');
+            transferStatusChart = new Chart(transferStatusCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Completed', 'Pending', 'Rejected'],
+                    datasets: [{
+                        label: 'Transfer Status',
+                        data: [65, 25, 10],
+                        backgroundColor: [
+                            '#10B981',
+                            '#F59E0B',
+                            '#EF4444'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 20
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Initialize dashboard
+            console.log('Dashboard initializing...');
+            updateDashboard();
+            // Update every 5 minutes
+            setInterval(updateDashboard, 300000);
+
+            // Add this function to get and display user info
+            async function getUserInfo() {
+                try {
+                    const response = await fetch('http://localhost/vir-data/backend/api/user_info.php', {
+                        credentials: 'include'  // Important for session handling
+                    });
+                    const data = await response.json();
+
+                    if (data.status === 'success') {
+                        document.querySelector('#userGreeting').textContent = `Welcome, ${data.user.name}!`;
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch user info:', error);
+                }
+            }
+
+            // Call getUserInfo when page loads
+            getUserInfo();
+            updateDashboard();
+        });
+
+        // Dashboard stats object
+        let dashboardStats = {
+            totalTransfers: 0,
+            todayTransfers: 0,
+            pendingApprovals: 0,
+            totalCars: 0
+        };
+
+        // Test API connection
+        async function testAPI() {
+            try {
+                const response = await fetch('http://localhost/vir-data/backend/api/dashboard_stats.php');
+                const data = await response.json();
+                console.log('API Response:', data);
+                return data;
+            } catch (error) {
+                console.error('API Error:', error);
+                return null;
+            }
+        }
+
+        // Update dashboard function
+        async function updateDashboard() {
+            try {
+                const response = await fetch('http://localhost/vir-data/backend/api/dashboard_stats.php');
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    // Update stats
+                    document.getElementById('totalTransfers').textContent = data.stats.total;
+                    document.getElementById('todayTransfers').textContent = data.stats.today;
+                    document.getElementById('recentActivities').textContent = data.stats.recent;
+                    document.getElementById('totalCars').textContent = data.stats.totalCars;
+
+                    // Update transfer trends chart
+                    if (transferTrendsChart) {
+                        transferTrendsChart.data.labels = data.trends.map(t => formatDate(t.date));
+                        transferTrendsChart.data.datasets[0].data = data.trends.map(t => t.count);
+                        transferTrendsChart.update();
+                    }
+
+                    // Update vehicle types chart
+                    if (vehicleTypesChart) {
+                        vehicleTypesChart.data.labels = data.vehicleTypes.map(t => t.body_type);
+                        vehicleTypesChart.data.datasets[0].data = data.vehicleTypes.map(t => t.count);
+                        vehicleTypesChart.update();
+                    }
+
+                    // Update recent transfers
+                    updateRecentTransfers(data.recentTransfers);
+                }
+            } catch (error) {
+                console.error('Error updating dashboard:', error);
+            }
+        }
+
+        // Helper function to format dates
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        // Update recent transfers function
+        function updateRecentTransfers(transfers) {
+            const container = document.getElementById('recentTransfers');
+            if (!container || !transfers) return;
+
+            container.innerHTML = transfers.map(transfer => `
+                <div class="border-b pb-3">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="font-semibold">${transfer.new_owner_name}</p>
+                            <p class="text-sm text-gray-600">${transfer.vehicle_make} - ${transfer.chassis_number}</p>
+                        </div>
+                        <span class="text-sm text-gray-500">${formatDate(transfer.transfer_date)}</span>
+                    </div>
+                </div>
+            `).join('') || '<p class="text-gray-500">No recent transfers</p>';
+        }
+
+        function handleLogout() {
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.href = 'login.html';
+        }
+
+        // Add event listener for time range changes
+        document.getElementById('trendTimeRange').addEventListener('change', function() {
+            // Here you would typically fetch new data based on the selected time range
+            // and update the chart
+            updateTrendsChart(this.value);
+        });
+
+        function updateTrendsChart(timeRange) {
+            // This function would fetch and update data based on the selected time range
+            console.log('Updating chart for time range:', timeRange);
+            // Add your API call and chart update logic here
+        }
+
+        // Add event listener for time period changes
+        document.querySelector('select').addEventListener('change', function() {
+            updateDistributionChart(this.value);
+        });
+
+        function updateDistributionChart(timePeriod) {
+            // This function would fetch and update data based on the selected time period
+            console.log('Updating distribution for period:', timePeriod);
+            // Add your API call and chart update logic here
+        }
+    </script>
+</body>
+</html>
