@@ -112,3 +112,34 @@ def delete_file(request, file_id):
     uploaded_file = get_object_or_404(UploadedFile, id=file_id)
     uploaded_file.delete()  # Delete the file
     return redirect('userpage')  # Redirect back to the user page
+
+
+
+def upload_csv(request):
+    if request.method == 'POST' and request.FILES.get('csvFile'):
+        csv_file = request.FILES['csvFile']
+        if not csv_file.name.endswith('.csv'):
+            return JsonResponse({'error': 'File is not CSV format'})
+
+        try:
+            # Save file temporarily
+            fs = FileSystemStorage()
+            filename = fs.save(csv_file.name, csv_file)
+            file_path = fs.path(filename)
+
+            with open(file_path, 'r') as file:
+                reader = csv.reader(file)
+                next(reader)  # Skip header if needed
+
+                with connection.cursor() as cursor:
+                    for row in reader:
+                        # Replace 'your_table_name' with your MySQL table name
+                        cursor.execute("""
+                            INSERT INTO your_table_name (column1, column2, column3)
+                            VALUES (%s, %s, %s)
+                        """, row)
+            fs.delete(filename)  # Clean up
+            return JsonResponse({'success': 'File processed successfully'})
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
+    return render(request, 'account/super.html')

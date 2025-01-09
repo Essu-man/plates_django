@@ -177,6 +177,18 @@
             <input type="file" id="excelFileInput" accept=".xlsx, .xls" class="border border-gray-300 rounded-md shadow-sm py-2 mr-2">
             <button type="button" id="importExcelBtn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Import Excel</button>
         </div>
+
+        <div class="bg-white rounded shadow p-6 mb-6">
+            <h2 class="text-2xl font-bold text-gray-700 mb-4">Upload CSV</h2>
+            <form id="csvUploadForm" method="POST" enctype="multipart/form-data">
+                <input type="file" id="csvFile" name="csvFile" accept=".csv" class="border border-gray-300 rounded px-4 py-2 w-full mb-4">
+                <button type="submit" id="uploadBtn" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                    Upload and Process
+                </button>
+            </form>
+        </div>
+
+
         <!-- Excel Data Output -->
         <div id="csvOutput" class="mt-4 bg-gray-50 p-4 rounded-lg"></div>
         <div id="dataTableContainer" class="mt-6 overflow-x-auto">
