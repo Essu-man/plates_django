@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path
 #from .views import upload_csv
 from accounts import views
-
+from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', views.login_view, name='login'),
@@ -16,5 +16,6 @@ urlpatterns = [
     #path('import_xml/', views.import_xml, name='import_xml'),
     path('delete_file/<int:file_id>/', views.delete_file, name='delete_file'),
     path('import_file/', views.import_file, name='import_file'),
-    ##path('upload-csv/', upload_csv, name='upload_csv'),
+    #path('process_csv/', views.process_csv, name='process_csv'),
+    path('code_generator/', include('code_generator.urls')),
 ]

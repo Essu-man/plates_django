@@ -25,7 +25,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'accounts',  # Ensure your app is included
+    'accounts',
+    'code_generator',
 ]
 
 MIDDLEWARE = [
